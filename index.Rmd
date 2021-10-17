@@ -1,0 +1,94 @@
+---
+title: "Daños en la red vial nacional de Costa Rica"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r paquetes, message=FALSE}
+# Paquete para manipulación de datos
+library(dplyr)
+# Paquete para manejo de datos vectoriales
+library(sf)
+# Paquetes para manejo de datos raster
+library(terra)
+# Paquete para manejo de tablas
+library(DT)
+# Paquetes para graficación
+library(ggplot2)
+library(plotly)
+# Paquete para mapas interactivos
+library(leaflet)
+```
+
+```{r datos, message=FALSE}
+# Lectura de una capa vectorial (GeoJSON) de zonas de conservación vial
+zonas <-
+  st_read(
+    "https://raw.githubusercontent.com/ggaltar/danos_red_vial/main/capas/zonas_conservacion_wgs84.geojson",
+    quiet = TRUE
+  )
+
+# Lectura de una capa vectorial (GeoJSON) de daños en la red vial nacional
+danos <-
+  st_read(
+    "https://raw.githubusercontent.com/ggaltar/danos_red_vial/main/capas/danos_wgs84.geojson",
+    quiet = TRUE
+  )
+
+# Lectura de una capa raster de altitud
+altitud <-
+  rast(
+    "/vsicurl/https://raw.githubusercontent.com/tpb728O-programaciongeoespacialr/2021ii/master/datos/worldclim/altitud.tif"
+  )
+```
+
+### Tabla
+
+```{r tabla}
+danos %>%
+  st_drop_geometry() %>%
+  select(id, estructura, elemento, tipo, severidad) %>%
+  datatable(rownames = FALSE,
+            colnames = c('ID', 'Estructura','Elemento', 'Tipo', 'Severidad'),
+            filter = 'top',
+            options = list(
+              language = list(url = '//cdn.datatables.net/plug-ins/1.10.11/i18n/Spanish.json')
+            )
+  )
+```
+
+### Gráfico de principales elementos dañados
+
+```{r grafico1}
+
+# Preparación de los datos
+elementos <-
+  danos %>%
+  st_drop_geometry() %>%
+  select(elemento) %>%
+  rename(Elemento = elemento) %>%
+  group_by(Elemento) %>%
+  summarise(suma = n()) %>%
+  filter(suma > 10)
+
+# Ordenando la tabla por cantidad en orden descendente (no se usó, se cambió por reorder() )
+#elementos$Elemento <- factor(elementos$Elemento,
+#                      levels = elementos$Elemento[order(elementos$suma, decreasing = TRUE)])
+
+
+# Gráfico
+
+ggplot(elementos, aes(x = reorder(Elemento, -suma),y = suma)) +
+  geom_col(colour = "#bc4b51", fill = "#bc4b51",width = 0.5) +
+  geom_text(aes(label = suma), vjust = 1.2, colour = "White") +
+  ggtitle("Principales elementos dañados") +
+  theme(plot.title = element_text(hjust = 0.5),
+        axis.text.x = element_text(angle = 30,hjust = 1, vjust = 1)
+        ) +
+  xlab("Elementos") +
+  ylab("Cantidad")
+
+```
