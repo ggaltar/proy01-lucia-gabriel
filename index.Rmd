@@ -79,7 +79,7 @@ elementos <-
 #                      levels = elementos$Elemento[order(elementos$suma, decreasing = TRUE)])
 
 
-# Gráfico
+# Gráfico de principales elementos dañados
 
 ggplot(elementos, aes(x = reorder(Elemento, -suma),y = suma)) +
   geom_col(colour = "#bc4b51", fill = "#bc4b51",width = 0.5) +
@@ -92,9 +92,12 @@ ggplot(elementos, aes(x = reorder(Elemento, -suma),y = suma)) +
   ylab("Cantidad")
 
 ```
-### Gráfico de registros mensuales
+
+## Gráfico de registros mensuales
 
 ```{r grafico2}
+
+# Preparación de los datos
 
 registros_mes <-
   danos %>%
