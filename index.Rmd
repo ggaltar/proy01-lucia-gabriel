@@ -93,7 +93,7 @@ ggplot(elementos, aes(x = reorder(Elemento, -suma),y = suma)) +
 
 ```
 
-## Gráfico de registros mensuales
+### Gráfico de registros mensuales
 
 ```{r grafico2}
 
