@@ -92,3 +92,27 @@ ggplot(elementos, aes(x = reorder(Elemento, -suma),y = suma)) +
   ylab("Cantidad")
 
 ```
+### Gráfico de registros mensuales
+
+```{r grafico2}
+
+registros_mes <-
+  danos %>%
+  st_drop_geometry() %>%
+  mutate(fecha = as.Date(fecha_rep, formtat = "%m/%d/%Y")) %>%
+  group_by (mes = format(fecha, "%m")) %>%
+  summarise (reportes = n())
+
+# Gráfico de registros mensuales
+ggplot(registros_mes, aes(x = mes, y = reportes)) +
+  ggtitle("Registros de daños por mes 2020-2021") +
+  geom_col(colour = "#6a994e", fill = "#6a994e",width = 0.5) + 
+  geom_text(aes(label = reportes), vjust = -0.5, colour = "#3a5a40") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  xlab("Mes") +
+  ylab("Reportes") +
+  scale_x_discrete(labels = c("01" = "Ene", "02" = "Feb", "03" = "Mar", "04" = "Abr", "05" = "May", "06" = "Jun", "07" = "Jul", "08" = "Ago", "09" = "Set", "10" = "Oct", "11" = "Nov", "12" = "Dic"))
+
+
+```
+
