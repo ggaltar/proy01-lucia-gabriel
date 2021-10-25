@@ -119,3 +119,39 @@ ggplot(registros_mes, aes(x = mes, y = reportes)) +
 
 ```
 
+# Mapa
+
+```{r mapa, warning=FALSE}
+# Conversión del objeto altitud a la clase RasterLayer
+altitud_rl <- raster::raster(altitud)
+# Mapa leaflet básico con capas de provincias y registros de presencia de felinos
+leaflet() %>%
+  addTiles() %>%
+  addRasterImage(
+    altitud_rl, 
+    opacity = 0.6
+  ) %>%    
+  addPolygons(
+    data = zonas,
+    color = "black",
+    fillColor = "transparent",
+    stroke = TRUE,
+    weight = 1.0,
+  ) %>%
+  addCircleMarkers(
+    data = danos,
+    stroke = F,
+    radius = 4,
+    fillColor = 'orange',
+    fillOpacity = 1
+  )
+```
+
+
+
+
+
+
+
+
+
