@@ -42,7 +42,10 @@ danos <-
 altitud <-
   rast(
     "/vsicurl/https://raw.githubusercontent.com/tpb728O-programaciongeoespacialr/2021ii/master/datos/worldclim/altitud.tif"
-  )
+  ) 
+
+
+
 ```
 
 ### Tabla
@@ -123,6 +126,7 @@ ggplot(registros_mes, aes(x = mes, y = reportes)) +
 
 ```{r mapa, warning=FALSE}
 altitud_rl <- raster::raster(altitud)
+
 # Registro de daños, zonas de conservación y ráster de altitud
 leaflet() %>%
   addProviderTiles(providers$Esri.NatGeoWorldMap , group = "Nat Geo") %>%
@@ -131,7 +135,7 @@ leaflet() %>%
   setView(-84.10, 9.5, 7) %>%
   addRasterImage(
     altitud_rl, 
-    opacity = 0.6,
+    opacity = 0.5,
     group = "Altitud"
   ) %>%    
   addPolygons(
