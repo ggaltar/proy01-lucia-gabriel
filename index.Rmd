@@ -122,14 +122,17 @@ ggplot(registros_mes, aes(x = mes, y = reportes)) +
 # Mapa
 
 ```{r mapa, warning=FALSE}
-# Conversión del objeto altitud a la clase RasterLayer
 altitud_rl <- raster::raster(altitud)
-# Mapa leaflet básico con capas de provincias y registros de presencia de felinos
+# Registro de daños, zonas de conservación y ráster de altitud
 leaflet() %>%
-  addTiles() %>%
+  addProviderTiles(providers$Esri.NatGeoWorldMap , group = "Nat Geo") %>%
+  addTiles(group = "OSM") %>%
+  addProviderTiles(providers$CartoDB.Positron, group = "CartoDB") %>%
+  setView(-84.10, 9.5, 7) %>%
   addRasterImage(
     altitud_rl, 
-    opacity = 0.6
+    opacity = 0.6,
+    group = "Altitud"
   ) %>%    
   addPolygons(
     data = zonas,
@@ -137,14 +140,22 @@ leaflet() %>%
     fillColor = "transparent",
     stroke = TRUE,
     weight = 1.0,
+    group = "Zonas de conservación"
   ) %>%
   addCircleMarkers(
     data = danos,
     stroke = F,
-    radius = 4,
-    fillColor = 'orange',
-    fillOpacity = 1
-  )
+    radius = 3,
+    fillColor = '#3c6e71',
+    fillOpacity = 1,
+    group = "Daños"
+  )  %>%
+  addLayersControl(
+    baseGroups = c("Nat Geo", "OSM", "CartoDB"),
+    overlayGroups = c("Daños", "Zonas de conservación","Altitud"),
+    options = layersControlOptions(collapsed = FALSE)
+  ) %>%
+  hideGroup("Altitud")
 ```
 
 
